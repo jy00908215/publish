@@ -1,0 +1,11 @@
+﻿  main.c
+e:\c,c++,c#\project\acllib\acllib\main.c(4): warning C4013: “initConsole”未定义；假设外部返回 int
+e:\c,c++,c#\project\acllib\acllib\main.c(5): warning C4013: “printf”未定义；假设外部返回 int
+e:\c,c++,c#\project\acllib\acllib\main.c(7): warning C4013: “scanf”未定义；假设外部返回 int
+e:\c,c++,c#\project\acllib\acllib\main.c(9): warning C4013: “initWindow”未定义；假设外部返回 int
+e:\c,c++,c#\project\acllib\acllib\main.c(10): warning C4013: “beginPaint”未定义；假设外部返回 int
+e:\c,c++,c#\project\acllib\acllib\main.c(11): warning C4013: “line”未定义；假设外部返回 int
+e:\c,c++,c#\project\acllib\acllib\main.c(12): warning C4013: “endPaint”未定义；假设外部返回 int
+main.obj : error LNK2019: 无法解析的外部符号 _printf，该符号在函数 _Setup 中被引用
+main.obj : error LNK2019: 无法解析的外部符号 _scanf，该符号在函数 _Setup 中被引用
+E:\c,c++,c#\project\acllib\Debug\acllib.exe : fatal error LNK1120: 2 个无法解析的外部命令

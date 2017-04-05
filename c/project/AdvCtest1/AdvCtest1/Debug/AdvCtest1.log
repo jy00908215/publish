@@ -1,0 +1,4 @@
+﻿  main.c
+e:\c,c++,c#\project\advctest1\advctest1\main.c(7): warning C4013: “gets”未定义；假设外部返回 int
+  AdvCtest1.vcxproj -> E:\c,c++,c#\project\AdvCtest1\Debug\AdvCtest1.exe
+  AdvCtest1.vcxproj -> E:\c,c++,c#\project\AdvCtest1\Debug\AdvCtest1.pdb (Full PDB)
