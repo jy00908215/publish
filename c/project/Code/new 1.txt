@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+int main(void)
+
+{
+
+int i1=1,i2=2;
+
+int sum=i1+i2;
+
+printf("%d\n",sum);
+
+return 0;
+
+}
