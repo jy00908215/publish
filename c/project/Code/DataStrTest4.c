@@ -1,10 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
-void Rev(int a[] ,int begin, int end);
+void Rev(int a[], int begin, int end);
 int main()
 {
-	int  FriAddress, fNumber, K,Number;
-	scanf("%d %d %d",  &FriAddress, &fNumber, &K);
+	int  FriAddress, fNumber, K, Number;
+	scanf("%d %d %d", &FriAddress, &fNumber, &K);
 	int Node[100001][2];
 	int i;
 	for (i = 0; fNumber > i; i++) {
@@ -14,8 +14,8 @@ int main()
 		Node[Address][1] = Next;
 	}
 	int AddList[100001];
-	int m=FriAddress;
-	int cnt=0;
+	int m = FriAddress;
+	int cnt = 0;
 	do
 	{
 		AddList[cnt] = m;
@@ -27,12 +27,12 @@ int main()
 	//	m = Node[m][1];
 	//}
 	Number = cnt;
-	int tmp=0;
-	while (Number>=tmp+K)
+	int tmp = 0;
+	while (Number >= tmp + K)
 	{
 		int i = tmp;
 		tmp += K;
-		Rev(AddList,i ,tmp-1 );
+		Rev(AddList, i, tmp - 1);
 	}
 
 	for (i = 0; Number > i; i++) {
@@ -43,7 +43,7 @@ int main()
 		else {
 			printf("%05d %d -1\n", AddList[i], Node[AddList[i]][0]);
 		}
-			
+
 
 
 	}
