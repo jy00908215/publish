@@ -1,61 +1,67 @@
 #include<stdio.h>
 #include<stdlib.h>
-void Rev(int a[] ,int begin, int end);
+typedef struct _node {
+	int value;
+	int expon;
+	struct _node *next;
+} Node;
+typedef struct  _list{
+	Node* head; 
+} List;
+List * read();
+void print_List(List * pList);
 int main()
 {
-	int  FriAddress, fNumber, K,Number;
-	scanf("%d %d %d",  &FriAddress, &fNumber, &K);
-	int Node[100001][2];
-	int i;
-	for (i = 0; fNumber > i; i++) {
-		int Address, Data, Next;
-		scanf("%d %d %d", &Address, &Data, &Next);
-		Node[Address][0] = Data;
-		Node[Address][1] = Next;
-	}
-	int AddList[100001];
-	int m=FriAddress;
-	int cnt=0;
-	do
-	{
-		AddList[cnt] = m;
-		m = Node[m][1];
-		cnt++;
-	} while (m != -1);
-	//for (cnt = 0; fNumber > cnt; cnt++) {
-	//	AddList[cnt] = m;
-	//	m = Node[m][1];
-	//}
-	Number = cnt;
-	int tmp=0;
-	while (Number>=tmp+K)
-	{
-		int i = tmp;
-		tmp += K;
-		Rev(AddList,i ,tmp-1 );
-	}
-
-	for (i = 0; Number > i; i++) {
-		if (Number - 1 > i) {
-			Node[AddList[i]][1] = AddList[i + 1];
-			printf("%05d %d %05d\n", AddList[i], Node[AddList[i]][0], Node[AddList[i]][1]);
-		}
-		else {
-			printf("%05d %d -1\n", AddList[i], Node[AddList[i]][0]);
-		}
-			
-
-
-	}
+	List *L1, *L2;
+	L1 = read();
+	L2 = read();
+	print_List(L1);
+	print_List(L2);
 	system("pause");
-	return 0;
 }
-void Rev(int a[], int begin, int end) {
-	int i;
-	int tmp;
-	for (; end >= begin; begin++, end--) {
-		tmp = a[begin];
-		a[begin] = a[end];
-		a[end] = tmp;
+List * read(){
+	int cnt,i;
+	List * l=(List *)malloc(sizeof(List));
+	Node * list = (Node *)malloc(sizeof(Node));
+	list->next = NULL;
+	l->head = list;
+	scanf_s("%d",&cnt);
+	if (0<cnt){
+		for(i=0;cnt>i;i++){
+			Node *tmp = (Node *)malloc(sizeof(Node));
+			scanf_s("%d%d", &(tmp->value), &(tmp->expon));
+			if (i==0) {
+				list->next = NULL;
+				list->value = tmp->value;
+				list->expon = tmp->expon;
+			}
+			else
+			{
+				tmp->next = NULL;
+				list->next = tmp;
+				list = tmp;
+			}
+		}
+	}
+	return l;
+}
+void print_List(List * pList)
+{
+	Node * last = pList->head;
+	if (!last) {
+		printf("0 0\n");
+	}
+	else {
+		while (last)
+		{
+			if (last->next != NULL) {
+				printf("%d %d ", last->value, last->expon);
+			}
+			else
+			{
+				printf("%d %d\n", last->value, last->expon);
+			}
+			last = last->next;
+		}
 	}
 }

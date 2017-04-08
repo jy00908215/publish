@@ -1,4 +1,3 @@
 ﻿  main.c
-e:\publish\c\project\newtest\newtest\main.c(54): warning C4101: “i”: 未引用的局部变量
   newtest.vcxproj -> E:\publish\c\project\newtest\Debug\newtest.exe
   newtest.vcxproj -> E:\publish\c\project\newtest\Debug\newtest.pdb (Full PDB)
