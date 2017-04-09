@@ -1,4 +1,7 @@
 ﻿  main.c
-e:\publish\c\project\newtest\newtest\main.c(54): warning C4101: “i”: 未引用的局部变量
+e:\publish\c\project\newtest\newtest\main.c(5): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 参见“scanf”的声明
+e:\publish\c\project\newtest\newtest\main.c(12): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 参见“scanf”的声明
   newtest.vcxproj -> E:\publish\c\project\newtest\Debug\newtest.exe
   newtest.vcxproj -> E:\publish\c\project\newtest\Debug\newtest.pdb (Full PDB)
