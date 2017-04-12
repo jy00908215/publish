@@ -7,14 +7,21 @@ using System.Collections;
 
 namespace Sokoban
 {
+    public struct Pos
+    {
+        public int y;
+        public int x;
+    };
     public class Const
     {
         public const int nothing = 0, wall = 1, box = 2, role = 3, target = 4, goal = 5;
         public const int up = 0, down = 1, left = 2, right = 3;
+        public const int boxNumber = 9;
+        public const int mapHigt = 12, mapWidth = 13;
     }
     public class Map
     {
-        public static int[,] now = new int[12, 13]
+        public static int[,] now = new int[Const.mapHigt, Const.mapWidth]
         {
             {0,0,0,0,0,1,1,1,1,1,1,1,0},
             {0,0,0,0,0,1,0,0,1,0,0,1,0},
@@ -29,7 +36,7 @@ namespace Sokoban
             {0,0,0,0,0,1,0,3,1,0,0,1,0},
             {0,0,0,0,0,1,1,1,1,1,1,1,0}
         };
-        public static int[,] original = new int[12, 13]
+        public static int[,] original = new int[Const.mapHigt, Const.mapWidth]
         {
             {0,0,0,0,0,1,1,1,1,1,1,1,0},
             {0,0,0,0,0,1,0,0,1,0,0,1,0},
@@ -45,69 +52,76 @@ namespace Sokoban
             {0,0,0,0,0,1,1,1,1,1,1,1,0}
         };
     }
-    public class RolePos
+    public class Object
     {
-        public static int y = 10;
-        public static int x = 7;
+        public static Pos rolePlayer;
+        public static Pos[] box = new Pos[Const.boxNumber];
     }
     public class MovePos
     {
-        public static int direction = 0;
-        public static int[] Next= new int[2] { 0, 0 };
-        public static int[] BoxNext = new int[2] { 0, 0 };
+        public static Pos nextPos;
+        public static Pos gotoPos;
     }
     public class Function
         {
-        public static void Move_Direction() //根据移动方向获得下一个点的函数
+        public static void NextPosIs(string input,Pos objPos) //根据移动方向获得下一个点的函数
         {
-            if (Const.up == MovePos.direction)
+            if ("UpArrow" == input)
             {
-                MovePos.Next[0] = RolePos.y - 1;
-                MovePos.Next[1] = RolePos.x;
-                MovePos.BoxNext[0] = RolePos.y - 2;
-                MovePos.BoxNext[1] = RolePos.x;
+                MovePos.nextPos.y = objPos.y - 1;
+                MovePos.nextPos.x = objPos.x;
             }
-            if (Const.down == MovePos.direction)
+            if ("DownArrow" == input)
             {
-                MovePos.Next[0] = RolePos.y + 1;
-                MovePos.Next[1] = RolePos.x;
-                MovePos.BoxNext[0] = RolePos.y + 2;
-                MovePos.BoxNext[1] = RolePos.x;
+                MovePos.nextPos.y = objPos.y + 1;
+                MovePos.nextPos.x = objPos.x;
             }
-            if (Const.left == MovePos.direction)
+            if ("LeftArrow" == input)
             {
-                MovePos.Next[0] = RolePos.y;
-                MovePos.Next[1] = RolePos.x - 1;
-                MovePos.BoxNext[0] = RolePos.y;
-                MovePos.BoxNext[1] = RolePos.x - 2;
+                MovePos.nextPos.y = objPos.y;
+                MovePos.nextPos.x = objPos.x - 1;
             }
-            if (Const.right == MovePos.direction)
+            if ("RightArrow" == input)
             {
-                MovePos.Next[0] = RolePos.y;
-                MovePos.Next[1] = RolePos.x + 1;
-                MovePos.BoxNext[0] = RolePos.y;
-                MovePos.BoxNext[1] = RolePos.x + 2;
+                MovePos.nextPos.y = objPos.y;
+                MovePos.nextPos.x = objPos.x + 1;
             }
         }
-        public static void Move_Role() //移动角色坐标的函数
+        public static void Move_Obj(string input,Pos objPos) //移动角色坐标的函数
         {
-            if (Const.up == MovePos.direction)
+            if ("UpArrow" == input)
             {
-                RolePos.y--;
+                objPos.y--;
             }
-            if (Const.down == MovePos.direction)
+            if ("DownArrow" == input)
             {
-                RolePos.y++;
+                objPos.y++;
             }
-            if (Const.left == MovePos.direction)
+            if ("LeftArrow" == input)
             {
-                RolePos.x--;
+                objPos.x--;
             }
-            if (Const.right == MovePos.direction)
+            if ("RightArrow" == input)
             {
-                RolePos.x++;
+                objPos.x++;
             }
         }
+        public static bool GridCanEnter(int[] nextPos)
+        {
+            return (0 <= MovePos.nextPos.y && Const.mapHigt >= MovePos.nextPos.y &&
+                0 <= MovePos.nextPos.x && Const.mapWidth >= MovePos.nextPos.x &&
+                Const.wall != Map.original[MovePos.nextPos.y, MovePos.nextPos.x]);
+        }
+        public static int FindBoxNumber(Pos pos)
+        {
+            for (int i = 0; Const.boxNumber > i; i++)
+            {
+                if (Object.box[i].y == pos.y && Object.box[i].x == pos.x)
+                    return i;
+            }
+            return -1;
+        }
+
         public static void Move() //移动函数
         {
             Function.Move_Direction();
@@ -169,6 +183,26 @@ namespace Sokoban
     {
         static void Main(string[] args)
         {
+            Object.rolePlayer.y = 10;
+            Object.rolePlayer.x = 7;
+            Object.box[0].y = 2;
+            Object.box[0].x = 8;
+            Object.box[1].y = 2;
+            Object.box[1].x = 9;
+            Object.box[2].y = 3;
+            Object.box[2].x = 7;
+            Object.box[3].y = 5;
+            Object.box[3].x = 7;
+            Object.box[4].y = 6;
+            Object.box[4].x = 6;
+            Object.box[5].y = 6;
+            Object.box[5].x = 8;
+            Object.box[6].y = 6;
+            Object.box[6].x = 10;
+            Object.box[7].y = 7;
+            Object.box[7].x = 7;
+            Object.box[8].y = 9;
+            Object.box[8].x = 7;
             for (;;)
             {
                 //打印新地图
@@ -205,26 +239,8 @@ namespace Sokoban
                 }
                 ConsoleKeyInfo aj = Console.ReadKey();
                 Console.Clear();
-                if ("UpArrow" == aj.Key.ToString())
-                {
-                    MovePos.direction = Const.up;
-                    Function.Move();
-                }
-                if ("DownArrow" == aj.Key.ToString())
-                {
-                    MovePos.direction = Const.down;
-                    Function.Move();
-                }
-                if ("LeftArrow" == aj.Key.ToString())
-                {
-                    MovePos.direction = Const.left;
-                    Function.Move();
-                }
-                if ("RightArrow" == aj.Key.ToString())
-                {
-                    MovePos.direction = Const.right;
-                    Function.Move();
-                }
+                string input = "";
+                input = aj.Key.ToString();
             }
             Console.ReadLine();
         }
