@@ -4,7 +4,7 @@ typedef struct _TreeNode *Tree;
 struct _TreeNode
 {
 	int value;
-	Tree Left,Right;
+	Tree Left, Right;
 	int flag;
 };
 Tree MakeTree(int treeNodeNumber);
@@ -17,12 +17,12 @@ void FreeTree(Tree T);
 int main() {
 	int treeNodeNumber, treeNumber, i;
 	Tree T;
-	scanf_s("%d", &treeNodeNumber);
+	scanf("%d", &treeNodeNumber);
 	while (treeNodeNumber)
 	{
-		scanf_s("%d", &treeNumber);
+		scanf("%d", &treeNumber);
 		T = MakeTree(treeNodeNumber);
-		for (i = 1; treeNumber > i; i++) {
+		for (i = 0; treeNumber > i; i++) {
 			if (Judge(T, treeNodeNumber))printf("Yes\n");
 			else printf("No\n");
 			ResetT(T);
@@ -36,15 +36,15 @@ int main() {
 Tree MakeTree(int treeNodeNumber) {
 	Tree T;
 	int i, value;
-	scanf_s("%d", &value);
+	scanf("%d", &value);
 	T = NewNode(value);
 	for (i = 1; treeNodeNumber > i; i++) {
-		scanf_s("%d", &value);
+		scanf("%d", &value);
 		T = Insert(T, value);
 	}
 	return T;
 }
-Tree Newnode(int value) {
+Tree NewNode(int value) {
 	Tree T = (Tree)malloc(sizeof(struct _TreeNode));
 	T->value = value;
 	T->Left = T->Right = NULL;
@@ -63,11 +63,11 @@ Tree Insert(Tree T, int value) {
 }
 int Judge(Tree T, int treeNodeNumber) {
 	int value, i, flag = 0;
-	scanf_s("%d", &value);
-	if (T->value != value) flag=1;
+	scanf("%d", &value);
+	if (T->value != value) flag = 1;
 	else T->flag = 1;
 	for (i = 1; treeNodeNumber > i; i++) {
-		scanf_s("%d", &value);
+		scanf("%d", &value);
 		if (!Check(T, value)) flag = 1;
 	}
 	if (flag) return 0;
