@@ -240,3 +240,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+c/project/AdvCtest4/AdvCtest4/AdvCtest4.vcxproj

@@ -16,27 +16,20 @@ namespace Sokoban
     {
         public const int nothing = 0, wall = 1, box = 2, role = 3, target = 4, goal = 5;
         public const int up = 0, down = 1, left = 2, right = 3;
-        public const int boxNumber = 9;
+        public const int boxNumber = 1;
         public const int mapHigt = 12, mapWidth = 13;
     }
-    public class Map
+    public class Output
     {
-        public static int[,] now = new int[Const.mapHigt, Const.mapWidth]
-        {
-            {0,0,0,0,0,1,1,1,1,1,1,1,0},
-            {0,0,0,0,0,1,0,0,1,0,0,1,0},
-            {0,0,0,0,0,1,0,0,2,2,0,1,0},
-            {1,1,1,1,1,1,0,2,1,0,0,1,0},
-            {1,4,4,4,1,1,1,0,1,0,0,1,1},
-            {1,4,0,0,1,0,0,2,0,1,0,0,1},
-            {1,4,0,0,0,0,2,0,2,0,2,0,1},
-            {1,4,0,0,1,0,0,2,0,1,0,0,1},
-            {1,4,4,4,1,1,1,0,1,0,0,1,1},
-            {1,1,1,1,1,1,0,2,0,0,0,1,0},
-            {0,0,0,0,0,1,0,3,1,0,0,1,0},
-            {0,0,0,0,0,1,1,1,1,1,1,1,0}
-        };
-        public static int[,] original = new int[Const.mapHigt, Const.mapWidth]
+        public static int[,] canvas = new int[Const.mapHigt, Const.mapWidth];
+    }
+    public class Input
+    {
+        public static string key = "";
+    }
+    public class Object
+    {
+        public static int [,] map= new int[Const.mapHigt, Const.mapWidth]
         {
             {0,0,0,0,0,1,1,1,1,1,1,1,0},
             {0,0,0,0,0,1,0,0,1,0,0,1,0},
@@ -51,68 +44,62 @@ namespace Sokoban
             {0,0,0,0,0,1,0,0,1,0,0,1,0},
             {0,0,0,0,0,1,1,1,1,1,1,1,0}
         };
-    }
-    public class Object
-    {
         public static Pos rolePlayer;
         public static Pos[] box = new Pos[Const.boxNumber];
     }
     public class MovePos
     {
-        public static Pos nextPos;
-        public static Pos gotoPos;
+        public static Pos roleNextPos;
+        public static Pos boxNextPos;
     }
     public class Function
+    {
+        public static bool CheckWin()
         {
-        public static void NextPosIs(string input,Pos objPos) //根据移动方向获得下一个点的函数
+            int n = 0;
+            for (int i = 0; Const.boxNumber > i; i++)
+            {
+                if (Output.canvas[Object.box[i].y, Object.box[i].x] != Const.target)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static Pos NextPosIs(string input,Pos objPos) //根据移动方向获得下一个点的函数
         {
+            Pos objNextPos;
+            objNextPos.x = -1;
+            objNextPos.y = -1;
             if ("UpArrow" == input)
             {
-                MovePos.nextPos.y = objPos.y - 1;
-                MovePos.nextPos.x = objPos.x;
+                objNextPos.y = objPos.y - 1;
+                objNextPos.x = objPos.x;
             }
             if ("DownArrow" == input)
             {
-                MovePos.nextPos.y = objPos.y + 1;
-                MovePos.nextPos.x = objPos.x;
+                objNextPos.y = objPos.y + 1;
+                objNextPos.x = objPos.x;
             }
             if ("LeftArrow" == input)
             {
-                MovePos.nextPos.y = objPos.y;
-                MovePos.nextPos.x = objPos.x - 1;
+                objNextPos.y = objPos.y;
+                objNextPos.x = objPos.x - 1;
             }
             if ("RightArrow" == input)
             {
-                MovePos.nextPos.y = objPos.y;
-                MovePos.nextPos.x = objPos.x + 1;
+                objNextPos.y = objPos.y;
+                objNextPos.x = objPos.x + 1;
             }
+            return objNextPos;
         }
-        public static void Move_Obj(string input,Pos objPos) //移动角色坐标的函数
+        public static bool GridCanEnter(Pos pos)
         {
-            if ("UpArrow" == input)
-            {
-                objPos.y--;
-            }
-            if ("DownArrow" == input)
-            {
-                objPos.y++;
-            }
-            if ("LeftArrow" == input)
-            {
-                objPos.x--;
-            }
-            if ("RightArrow" == input)
-            {
-                objPos.x++;
-            }
+            return (0 <= pos.y && Const.mapHigt >= pos.y &&
+                0 <= pos.x && Const.mapWidth >= pos.x &&
+                Const.wall != Object.map[pos.y, pos.x]);
         }
-        public static bool GridCanEnter(int[] nextPos)
-        {
-            return (0 <= MovePos.nextPos.y && Const.mapHigt >= MovePos.nextPos.y &&
-                0 <= MovePos.nextPos.x && Const.mapWidth >= MovePos.nextPos.x &&
-                Const.wall != Map.original[MovePos.nextPos.y, MovePos.nextPos.x]);
-        }
-        public static int FindBoxNumber(Pos pos)
+        public static int FindBox(Pos pos)
         {
             for (int i = 0; Const.boxNumber > i; i++)
             {
@@ -121,62 +108,76 @@ namespace Sokoban
             }
             return -1;
         }
-
-        public static void Move() //移动函数
+        public static void PrintOutput()
         {
-            Function.Move_Direction();
-            if (Const.nothing == Map.now[(MovePos.Next[0]),(MovePos.Next[1])] || //如果下一个位置是空地或者目标
-                Const.target == Map.now[(MovePos.Next[0]), (MovePos.Next[1])])
+            for (int i = 0; Const.mapHigt > i; i++)
             {
-                Map.now[(MovePos.Next[0]), (MovePos.Next[1])] = Const.role;
-                if (Const.target == Map.original[RolePos.y, RolePos.x])
+                for (int j = 0; Const.mapWidth > j; j++)
                 {
-                    Map.now[RolePos.y, RolePos.x] = Const.target;
+                    Output.canvas[i, j] = Object.map[i, j];
+                }
+            }
+            Output.canvas[Object.rolePlayer.y, Object.rolePlayer.x] = Const.role;
+            for (int i = 0; Const.boxNumber > i; i++)
+            {
+                if (Output.canvas[Object.box[i].y, Object.box[i].x] == Const.target)
+                {
+                    Output.canvas[Object.box[i].y, Object.box[i].x] = Const.goal;
                 }
                 else
                 {
-                    Map.now[RolePos.y, RolePos.x] = Const.nothing;
+                    Output.canvas[Object.box[i].y, Object.box[i].x] = Const.box;
                 }
-                Function.Move_Role();
             }
-            else if(Const.wall == Map.now[(MovePos.Next[0]), (MovePos.Next[1])]) //如果下一个位置是墙
+            for (int i = 0; i < 12; i++)
             {
-                return ;
+                for (int j = 0; j < 13; j++)
+                {
+                    if (Output.canvas[i, j] == Const.nothing)
+                    {
+                        Console.Write("　");
+                    }
+                    if (Output.canvas[i, j] == Const.wall)
+                    {
+                        Console.Write("■");
+                    }
+                    if (Output.canvas[i, j] == Const.box)
+                    {
+                        Console.Write("□");
+                    }
+                    if (Output.canvas[i, j] == Const.role)
+                    {
+                        Console.Write("♀");
+                    }
+                    if (Output.canvas[i, j] == Const.target)
+                    {
+                        Console.Write("☆");
+                    }
+                    if (Output.canvas[i, j] == Const.goal)
+                    {
+                        Console.Write("★");
+                    }
+                }
+                Console.WriteLine();
             }
-            else if (Const.box == Map.now[(MovePos.Next[0]), (MovePos.Next[1])] || //如果下一个位置是箱子或者已得分的箱子
-                Const.goal == Map.now[(MovePos.Next[0]), (MovePos.Next[1])])
+        }
+        public static void Move() //移动函数
+        {
+            MovePos.roleNextPos = Function.NextPosIs(Input.key, Object.rolePlayer);
+            if (Function.GridCanEnter(MovePos.roleNextPos) && Function.FindBox(MovePos.roleNextPos) == -1)
             {
-                if (Const.wall == Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])] || //如果箱子后面是墙或者箱子等
-                    Const.box == Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])]  ||
-                    Const.goal == Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])])
+                Object.rolePlayer = MovePos.roleNextPos;
+            }
+            else if (Function.GridCanEnter(MovePos.roleNextPos) && Function.FindBox(MovePos.roleNextPos)!=-1)
+            {
+                MovePos.boxNextPos = Function.NextPosIs(Input.key, MovePos.roleNextPos);
+                if(Function.GridCanEnter(MovePos.boxNextPos) && Function.FindBox(MovePos.boxNextPos) == -1)
                 {
-                    return;
-                }
-                else if (Const.nothing == Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])] ||
-                    Const.target == Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])]) //如果箱子后面是空地或者目标点
-                {
-                    if (Const.nothing == Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])])
-                    {
-                        Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])] = 2;
-                    }
-
-                    else
-                    {
-                        Map.now[(MovePos.BoxNext[0]), (MovePos.BoxNext[1])] = 5;
-                    }
-
-                    Map.now[(MovePos.Next[0]), (MovePos.Next[1])] = 3;
-                    if (Const.target == Map.original[RolePos.y, RolePos.x])
-                    {
-                        Map.now[RolePos.y, RolePos.x] = 4;
-                    }
-                    else
-                    {
-                        Map.now[RolePos.y, RolePos.x] = 0;
-                    }
-                    Function.Move_Role();
+                    Object.rolePlayer = MovePos.roleNextPos;
+                    Object.box[FindBox(MovePos.roleNextPos)] = MovePos.boxNextPos;
                 }
             }
+            return;
         }
     }
     class Program
@@ -187,62 +188,18 @@ namespace Sokoban
             Object.rolePlayer.x = 7;
             Object.box[0].y = 2;
             Object.box[0].x = 8;
-            Object.box[1].y = 2;
-            Object.box[1].x = 9;
-            Object.box[2].y = 3;
-            Object.box[2].x = 7;
-            Object.box[3].y = 5;
-            Object.box[3].x = 7;
-            Object.box[4].y = 6;
-            Object.box[4].x = 6;
-            Object.box[5].y = 6;
-            Object.box[5].x = 8;
-            Object.box[6].y = 6;
-            Object.box[6].x = 10;
-            Object.box[7].y = 7;
-            Object.box[7].x = 7;
-            Object.box[8].y = 9;
-            Object.box[8].x = 7;
-            for (;;)
+            while(!Function.CheckWin())
             {
-                //打印新地图
-                for (int i = 0; i < 12; i++)
-                {
-                    for (int j = 0; j < 13; j++)
-                    {
-                        if (Map.now[i, j] == Const.nothing)
-                        {
-                            Console.Write("　");
-                        }
-                        if (Map.now[i, j] == Const.wall)
-                        {
-                            Console.Write("■");
-                        }
-                        if (Map.now[i, j] == Const.box)
-                        {
-                            Console.Write("□");
-                        }
-                        if (Map.now[i, j] == Const.role)
-                        {
-                            Console.Write("♀");
-                        }
-                        if (Map.now[i, j] == Const.target)
-                        {
-                            Console.Write("☆");
-                        }
-                        if (Map.now[i, j] == Const.goal)
-                        {
-                            Console.Write("★");
-                        }
-                    }
-                    Console.WriteLine();
-                }
+                Function.PrintOutput();
                 ConsoleKeyInfo aj = Console.ReadKey();
                 Console.Clear();
-                string input = "";
-                input = aj.Key.ToString();
+                Input.key = aj.Key.ToString();
+                Function.Move();
             }
+            Console.Clear();
+            Console.Write("Congratulations!!!");
             Console.ReadLine();
+
         }
     }
 }
