@@ -1,111 +1,139 @@
-#include<stdio.h>
+﻿#include<stdio.h>
 #include<stdlib.h>
-typedef struct _AVLNode * AVLTree;
-struct _AVLNode
-{
-	int value;
-	AVLTree left, right;
-	int high;
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int ElementType;
+typedef struct TNode *Position;
+typedef Position BinTree;
+struct TNode {
+	ElementType Data;
+	BinTree Left;
+	BinTree Right;
 };
-int Max(int a, int b);
-int GetHigh(AVLTree T);
-AVLTree MakeAVLTree(int treeNodeNumber);
-AVLTree NewAVLTree(int value);
-AVLTree InsertAVLTree(AVLTree T, int value);
-AVLTree SingleLeftRotation(AVLTree T);
-AVLTree SingleRightRotation(AVLTree T);
-AVLTree DoubleLeftRightRotation(AVLTree T);
-AVLTree DoubleRightLeftRotation(AVLTree T);
-void FreeAVLTree(AVLTree T);
-void PrintAVLTreeRoot(AVLTree T);
-int main() {
-	int treeNodeNumber;
-	AVLTree T;
-	scanf_s("%d", &treeNodeNumber);
-	T = MakeAVLTree(treeNodeNumber);
-	PrintAVLTreeRoot(T);
-	FreeAVLTree(T);
-	system("pause");
+
+void PreorderTraversal(BinTree BT); /* 先序遍历，由裁判实现，细节不表 */
+void InorderTraversal(BinTree BT);  /* 中序遍历，由裁判实现，细节不表 */
+
+BinTree Insert(BinTree BST, ElementType X);
+BinTree Delete(BinTree BST, ElementType X);
+Position Find(BinTree BST, ElementType X);
+Position FindMin(BinTree BST);
+Position FindMax(BinTree BST);
+
+int main()
+{
+	BinTree BST, MinP, MaxP, Tmp;
+	ElementType X;
+	int N, i;
+
+	BST = NULL;
+	scanf("%d", &N);
+	for (i = 0; i<N; i++) {
+		scanf("%d", &X);
+		BST = Insert(BST, X);
+	}
+	printf("Preorder:"); PreorderTraversal(BST); printf("\n");
+	MinP = FindMin(BST);
+	MaxP = FindMax(BST);
+	scanf("%d", &N);
+	for (i = 0; i<N; i++) {
+		scanf("%d", &X);
+		Tmp = Find(BST, X);
+		if (Tmp == NULL) printf("%d is not found\n", X);
+		else {
+			printf("%d is found\n", Tmp->Data);
+			if (Tmp == MinP) printf("%d is the smallest key\n", Tmp->Data);
+			if (Tmp == MaxP) printf("%d is the largest key\n", Tmp->Data);
+		}
+	}
+	scanf("%d", &N);
+	for (i = 0; i<N; i++) {
+		scanf("%d", &X);
+		BST = Delete(BST, X);
+	}
+	printf("Inorder:"); InorderTraversal(BST); printf("\n");
+
 	return 0;
 }
-int Max(int a, int b) {
-	return a > b ? a : b;
-}
-int GetHigh(AVLTree T) {
-	if (T) return T->high;
-	else return -1;
 
+void PreorderTraversal(BinTree BT){
+	printf("%d", BT->Data);
+	if (BT->Left) PreorderTraversal(BT->Left);
+	if (BT->Right) PreorderTraversal(BT->Right);
 }
-AVLTree MakeAVLTree(int treeNodeNumber) {
-	AVLTree T;
-	int i, value;
-	scanf_s("%d", &value);
-	T = NewAVLTree(value);
-	for (i = 1; treeNodeNumber > i; i++) {
-		scanf_s("%d", &value);
-		T = InsertAVLTree(T, value);
+void InorderTraversal(BinTree BT) {
+	if (BT->Left) PreorderTraversal(BT->Left);
+	printf("%d", BT->Data);
+	if (BT->Right) PreorderTraversal(BT->Right);
+}
+BinTree Insert(BinTree BST, ElementType X) {
+	if (!BST) {
+		BST = (BinTree)malloc(sizeof(struct TNode));
+		BST->Data = X;
+		BST->Left = BST->Right = NULL;
 	}
-	return T;
-}
-AVLTree NewAVLTree(int value) {
-	AVLTree T = (AVLTree)malloc(sizeof(struct _AVLNode));
-	T->value = value;
-	T->left = T->right = NULL;
-	T->high = 0;
-	return T;
-}
-AVLTree InsertAVLTree(AVLTree T, int value) {
-	if (!T) T = NewAVLTree(value);
-	else if (T->value > value) {
-		T->left = InsertAVLTree(T->left, value);
-		if (GetHigh(T->left) - GetHigh(T->right) == 2) {
-			if (T->left->value > value)
-				T = SingleLeftRotation(T);
-			else
-				T = DoubleLeftRightRotation(T);
+	else
+	{
+		if (BST->Data > X) {
+			BST->Left = Insert(BST->Left, X);
+		}
+		else if (BST->Data < X) {
+			BST->Right = Insert(BST->Right, X);
 		}
 	}
-	else if (T->value < value) {
-		T->right = InsertAVLTree(T->right, value);
-		if (GetHigh(T->right) - GetHigh(T->left) == 2) {
-			if (T->right->value < value)
-				T = SingleRightRotation(T);
-			else
-				T = DoubleRightLeftRotation(T);
+	return BST;
+}
+BinTree Delete(BinTree BST, ElementType X) {
+	BinTree Tmp;
+	if (!BST) printf("Not Found\n");
+	else if (BST->Data > X) {
+		BST->Left = Delete(BST->Left, X);
+	}
+	else if (BST->Data < X) {
+		BST->Right = Delete(BST->Right, X);
+	}
+	else
+	{
+		if (BST->Left&&BST->Right) {
+			Tmp = FindMin(BST->Right);
+			BST->Data = Tmp->Data;
+			BST->Right = Delete(BST->Right, Tmp->Data);
+		}
+		else
+		{
+			Tmp = BST;
+			if (!BST->Left)
+				BST = BST->Right;
+			else if (!BST->Right)
+				BST = BST->Left;
+			free(Tmp);
 		}
 	}
-	T->high = Max(GetHigh(T->left), GetHigh(T->right)) + 1;
-	return T;
+	return BST;
 }
-AVLTree SingleLeftRotation(AVLTree T) {
-	AVLTree Tmp = T->left;
-	T->left = Tmp->right;
-	Tmp->right = T;
-	T->high = Max(GetHigh(T->left), GetHigh(T->right)) + 1;
-	Tmp->high = Max(GetHigh(Tmp->left), GetHigh(Tmp->right)) + 1;
-	return Tmp;
+Position Find(BinTree BST, ElementType X) {
+	if (!BST) {
+		return NULL;
+	}
+	if (BST->Data > X) {
+		return Find(BST->Left, X);
+	}
+	else if (BST->Data < X) {
+		return Find(BST->Right, X);
+	}
+	else
+	{
+		return BST;
+	}
 }
-AVLTree SingleRightRotation(AVLTree T) {
-	AVLTree Tmp = T->right;
-	T->right = Tmp->left;
-	Tmp->left = T;
-	T->high = Max(GetHigh(T->left), GetHigh(T->right)) + 1;
-	Tmp->high = Max(GetHigh(Tmp->left), GetHigh(Tmp->right)) + 1;
-	return Tmp;
+Position FindMin(BinTree BST) {
+	if (!BST) return NULL;
+	else if (!BST->Left) return BST;
+	else return FindMin(BST->Left);
 }
-AVLTree DoubleLeftRightRotation(AVLTree T) {
-	T->left = SingleRightRotation(T->left);
-	return SingleLeftRotation(T);
-}
-AVLTree DoubleRightLeftRotation(AVLTree T) {
-	T->right = SingleLeftRotation(T->right);
-	return SingleRightRotation(T);
-}
-void FreeAVLTree(AVLTree T) {
-	if (T->left) FreeAVLTree(T->left);
-	if (T->right) FreeAVLTree(T->right);
-	free(T);
-}
-void PrintAVLTreeRoot(AVLTree T) {
-	printf("%d", T->value);
+Position FindMax(BinTree BST) {
+	if (!BST) return NULL;
+	else if (!BST->Right) return BST;
+	else return FindMax(BST->Right);
 }
