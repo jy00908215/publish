@@ -241,3 +241,5 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 c/project/AdvCtest4/AdvCtest4/AdvCtest4.vcxproj
+c/project/AdvCtest4/AdvCtest4/AdvCtest4.vcxproj
+c/project/AdvCtest4/AdvCtest4/Debug/AdvCtest4.tlog/CL.read.1.tlog
