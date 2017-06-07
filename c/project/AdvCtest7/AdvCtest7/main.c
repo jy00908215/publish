@@ -36,7 +36,7 @@ void MergeSort(int A[], int low, int mid, int high) {
 	int RightLow = mid + 1;
 	int RightHigh = high;
 	int i, k;
-	int *tmp= (int *)malloc((high - low + 1) * sizeof(int));
+	int *tmp = (int *)malloc((high - low + 1) * sizeof(int));
 	for (k = 0; LeftLow <= leftHigh&&RightLow <= RightHigh; k++) {
 		if (A[LeftLow] <= A[RightLow])
 			tmp[k] = A[LeftLow++];
