@@ -14,6 +14,7 @@ void PrintNote(PtNode A);
 void Bubble_Sort(PtNode A);
 void Swap(PtNode A,int a,int b);
 void Insertion_Sort(PtNode A);
+void InsertionSort(PtNode A, int Begin, int End);
 void Shell_Sort(PtNode A);
 void Selection_Sort(PtNode A);
 int ScanForMin(PtNode A, int Begin, int End);
@@ -22,12 +23,15 @@ void PercDown(PtNode A, int Top, int Size);
 void Merge_Sort(PtNode A);
 void Merge_pass(PtNode A, PtNode B, int length,int MaxCount);
 void Merge(PtNode A, PtNode B, int low, int mid, int high);
+void Quick_Sort(PtNode A);
+void QuickSort(PtNode A, int Begin, int End);
+int Median3(PtNode A, int Begin, int End);
 
 
 int main() {
 	PtNode A =CreateNote();
 	PrintNote(A);
-	Merge_Sort(A);
+	Quick_Sort(A);
 	PrintNote(A);
 	return 0;
 }
@@ -74,8 +78,11 @@ void Bubble_Sort(PtNode A) {
 }
 
 void Insertion_Sort(PtNode A) {
+	InsertionSort(A, 0, A->MaxCount - 1);
+}
+void InsertionSort(PtNode A, int Begin, int End) {
 	int p, i, Tmp;
-	for (p = 1; A->MaxCount > p; p++) {
+	for (p = Begin + 1; End >= p; p++) {
 		Tmp = A->Data[p];
 		for (i = p; 0 < i&&Tmp < A->Data[i - 1]; i--)
 			A->Data[i] = A->Data[i - 1];
@@ -183,4 +190,39 @@ void Merge(PtNode A, PtNode B, int low, int mid, int high) {
 		B->Data[Tmp++] = A->Data[LeftLow++];
 	while (RightHigh >= RightLow)
 		B->Data[Tmp++] = A->Data[RightLow++];
+}
+
+void Quick_Sort(PtNode A) {
+	QuickSort(A, 0,A->MaxCount-1 );
+}
+void QuickSort(PtNode A, int Begin, int End) {
+	int Pivot;
+	int Cutoff = 50;
+	int Low, High;
+	if (End - Begin >= Cutoff) {
+		Pivot = Median3(A, Begin, End);
+		Low = Begin;
+		High = End - 1;
+		while (1) {
+			while (A->Data[++Low] < Pivot);
+			while (A->Data[--High] > Pivot);
+			if (Low < High) Swap(A, Low, High);
+			else break;
+		}
+		Swap(A, Low, End - 1);
+		QuickSort(A, Begin, Low - 1);
+		QuickSort(A, Low + 1, End);
+	}
+	else InsertionSort(A, Begin, End);
+}
+int Median3(PtNode A, int Begin, int End) {
+	int Center = (Begin + End) / 2;
+	if (A->Data[Begin] > A->Data[Center])
+		Swap(A, Begin, Center);
+	if (A->Data[Begin] > A->Data[End])
+		Swap(A, Begin, End);
+	if (A->Data[Center] > A->Data[End])
+		Swap(A, Center, End);
+	Swap(A, Center, End - 1);
+	return A->Data[End - 1];
 }
